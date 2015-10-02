@@ -74,20 +74,23 @@ public class ExecutionDataReader {
 	 *         stream has been reached.
 	 * @throws IOException
 	 *             might be thrown by the underlying input stream
+	 * @throws IncompatibleExecDataVersionException
+	 *             incompatible data version from different JaCoCo release
 	 */
-	public boolean read() throws IOException {
+	public boolean read() throws IOException,
+			IncompatibleExecDataVersionException {
 		try {
 			byte type;
 			do {
-<span class="fc" id="L82">				type = in.readByte();</span>
-<span class="fc bfc" id="L83" title="All 4 branches covered.">				if (firstBlock &amp;&amp; type != ExecutionDataWriter.BLOCK_HEADER) {</span>
-<span class="fc" id="L84">					throw new IOException(&quot;Invalid execution data file.&quot;);</span>
+<span class="fc" id="L85">				type = in.readByte();</span>
+<span class="fc bfc" id="L86" title="All 4 branches covered.">				if (firstBlock &amp;&amp; type != ExecutionDataWriter.BLOCK_HEADER) {</span>
+<span class="fc" id="L87">					throw new IOException(&quot;Invalid execution data file.&quot;);</span>
 				}
-<span class="fc" id="L86">				firstBlock = false;</span>
-<span class="fc bfc" id="L87" title="All 2 branches covered.">			} while (readBlock(type));</span>
-<span class="fc" id="L88">			return true;</span>
-<span class="fc" id="L89">		} catch (final EOFException e) {</span>
-<span class="fc" id="L90">			return false;</span>
+<span class="fc" id="L89">				firstBlock = false;</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">			} while (readBlock(type));</span>
+<span class="fc" id="L91">			return true;</span>
+<span class="fc" id="L92">		} catch (final EOFException e) {</span>
+<span class="fc" id="L93">			return false;</span>
 		}
 	}
 
@@ -102,53 +105,52 @@ public class ExecutionDataReader {
 	 *             might be thrown by the underlying input stream
 	 */
 	protected boolean readBlock(final byte blocktype) throws IOException {
-<span class="fc bfc" id="L105" title="All 4 branches covered.">		switch (blocktype) {</span>
+<span class="fc bfc" id="L108" title="All 4 branches covered.">		switch (blocktype) {</span>
 		case ExecutionDataWriter.BLOCK_HEADER:
-<span class="fc" id="L107">			readHeader();</span>
-<span class="fc" id="L108">			return true;</span>
-		case ExecutionDataWriter.BLOCK_SESSIONINFO:
-<span class="fc" id="L110">			readSessionInfo();</span>
+<span class="fc" id="L110">			readHeader();</span>
 <span class="fc" id="L111">			return true;</span>
-		case ExecutionDataWriter.BLOCK_EXECUTIONDATA:
-<span class="fc" id="L113">			readExecutionData();</span>
+		case ExecutionDataWriter.BLOCK_SESSIONINFO:
+<span class="fc" id="L113">			readSessionInfo();</span>
 <span class="fc" id="L114">			return true;</span>
+		case ExecutionDataWriter.BLOCK_EXECUTIONDATA:
+<span class="fc" id="L116">			readExecutionData();</span>
+<span class="fc" id="L117">			return true;</span>
 		default:
-<span class="fc" id="L116">			throw new IOException(format(&quot;Unknown block type %x.&quot;,</span>
+<span class="fc" id="L119">			throw new IOException(format(&quot;Unknown block type %x.&quot;,</span>
 					Byte.valueOf(blocktype)));
 		}
 	}
 
 	private void readHeader() throws IOException {
-<span class="fc bfc" id="L122" title="All 2 branches covered.">		if (in.readChar() != ExecutionDataWriter.MAGIC_NUMBER) {</span>
-<span class="fc" id="L123">			throw new IOException(&quot;Invalid execution data file.&quot;);</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">		if (in.readChar() != ExecutionDataWriter.MAGIC_NUMBER) {</span>
+<span class="fc" id="L126">			throw new IOException(&quot;Invalid execution data file.&quot;);</span>
 		}
-<span class="fc" id="L125">		final char version = in.readChar();</span>
-<span class="fc bfc" id="L126" title="All 2 branches covered.">		if (version != ExecutionDataWriter.FORMAT_VERSION) {</span>
-<span class="fc" id="L127">			throw new IOException(format(&quot;Incompatible version %x.&quot;,</span>
-					Integer.valueOf(version)));
+<span class="fc" id="L128">		final char version = in.readChar();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">		if (version != ExecutionDataWriter.FORMAT_VERSION) {</span>
+<span class="fc" id="L130">			throw new IncompatibleExecDataVersionException(version);</span>
 		}
-<span class="fc" id="L130">	}</span>
+<span class="fc" id="L132">	}</span>
 
 	private void readSessionInfo() throws IOException {
-<span class="fc bfc" id="L133" title="All 2 branches covered.">		if (sessionInfoVisitor == null) {</span>
-<span class="fc" id="L134">			throw new IOException(&quot;No session info visitor.&quot;);</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">		if (sessionInfoVisitor == null) {</span>
+<span class="fc" id="L136">			throw new IOException(&quot;No session info visitor.&quot;);</span>
 		}
-<span class="fc" id="L136">		final String id = in.readUTF();</span>
-<span class="fc" id="L137">		final long start = in.readLong();</span>
-<span class="fc" id="L138">		final long dump = in.readLong();</span>
-<span class="fc" id="L139">		sessionInfoVisitor.visitSessionInfo(new SessionInfo(id, start, dump));</span>
-<span class="fc" id="L140">	}</span>
+<span class="fc" id="L138">		final String id = in.readUTF();</span>
+<span class="fc" id="L139">		final long start = in.readLong();</span>
+<span class="fc" id="L140">		final long dump = in.readLong();</span>
+<span class="fc" id="L141">		sessionInfoVisitor.visitSessionInfo(new SessionInfo(id, start, dump));</span>
+<span class="fc" id="L142">	}</span>
 
 	private void readExecutionData() throws IOException {
-<span class="fc bfc" id="L143" title="All 2 branches covered.">		if (executionDataVisitor == null) {</span>
-<span class="fc" id="L144">			throw new IOException(&quot;No execution data visitor.&quot;);</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">		if (executionDataVisitor == null) {</span>
+<span class="fc" id="L146">			throw new IOException(&quot;No execution data visitor.&quot;);</span>
 		}
-<span class="fc" id="L146">		final long id = in.readLong();</span>
-<span class="fc" id="L147">		final String name = in.readUTF();</span>
-<span class="fc" id="L148">		final boolean[] probes = in.readBooleanArray();</span>
-<span class="fc" id="L149">		executionDataVisitor.visitClassExecution(new ExecutionData(id, name,</span>
+<span class="fc" id="L148">		final long id = in.readLong();</span>
+<span class="fc" id="L149">		final String name = in.readUTF();</span>
+<span class="fc" id="L150">		final boolean[] probes = in.readBooleanArray();</span>
+<span class="fc" id="L151">		executionDataVisitor.visitClassExecution(new ExecutionData(id, name,</span>
 				probes));
-<span class="fc" id="L151">	}</span>
+<span class="fc" id="L153">	}</span>
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201510010930</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201510020814</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>

@@ -18,13 +18,28 @@
 
 <h1>Change History</h1>
 
-<h2>Snapshot Build 0.7.6.201510010930 (2015/10/01)</h2>
+<h2>Snapshot Build 0.7.6.201510020814 (2015/10/02)</h2>
+
+<h3>New Features</h3>
+<ul>
+  <li>Improved error message in case of incompatible execution data files.
+      (GitHub <a href="https://github.com/jacoco/jacoco/issues/319">#319</a>).</li>
+</ul>
+
 
 <h3>Fixed Bugs</h3>
 <ul>
   <li>Fix <code>MBeanClient</code> example
       (GitHub <a href="https://github.com/jacoco/jacoco/issues/333">#333</a>).</li>
 </ul>
+
+<h3>API Changes</h3>
+<ul>
+  <li>In case of incompatible execution data formats read from another JaCoCo
+  version <code>ExecutionDataReader.read()</code> now throws a 
+  <code>IncompatibleExecDataVersionException</code>.</li>
+</ul>
+
 
 <h2>Release 0.7.5 (2015/05/24)</h2>
 
@@ -708,7 +723,7 @@
 
 </div>
 <div class="footer">
-  <span class="right"><a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201510010930</span>
+  <span class="right"><a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201510020814</span>
   <a href="license.html">Copyright</a> &copy; 2009, 2015 Mountainminds GmbH &amp; Co. KG and Contributors
 </div>
 
