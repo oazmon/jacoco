@@ -75,7 +75,7 @@ JaCoCo/org.jacoco.core,org.jacoco.core.analysis,NodeComparator,0,46,0,0,0,12,0,4
 JaCoCo/org.jacoco.core,org.jacoco.core.analysis,CoverageNodeImpl.new Object() {...},6,41,0,0,0,1,0,1,0,1
 JaCoCo/org.jacoco.core,org.jacoco.core.analysis,ICoverageNode.ElementType,9,69,0,0,0,7,2,2,2,2
 JaCoCo/org.jacoco.core,org.jacoco.core.analysis,NodeComparator.new NodeComparator() {...},0,30,0,2,0,3,0,3,0,2
-JaCoCo/org.jacoco.core,org.jacoco.core.analysis,CoverageBuilder,0,142,0,14,0,28,0,14,0,7
+JaCoCo/org.jacoco.core,org.jacoco.core.analysis,CoverageBuilder,0,142,0,14,0,29,0,14,0,7
 JaCoCo/org.jacoco.core,org.jacoco.core.analysis,Analyzer,0,274,0,15,0,59,0,21,0,12
 JaCoCo/org.jacoco.core,org.jacoco.core.analysis,Analyzer.new ClassAnalyzer() {...},0,21,0,0,0,4,0,2,0,2
 JaCoCo/org.jacoco.core,org.jacoco.core.analysis,CounterComparator,0,76,0,4,0,15,0,8,0,6

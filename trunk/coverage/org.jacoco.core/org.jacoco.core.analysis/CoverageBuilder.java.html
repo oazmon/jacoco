@@ -102,30 +102,34 @@ public class CoverageBuilder implements ICoverageVisitor {
 <span class="fc bfc" id="L102" title="All 2 branches covered.">		if (coverage.getInstructionCounter().getTotalCount() &gt; 0) {</span>
 <span class="fc" id="L103">			final String name = coverage.getName();</span>
 <span class="fc" id="L104">			final IClassCoverage dup = classes.put(name, coverage);</span>
-<span class="fc bfc" id="L105" title="All 4 branches covered.">			if (dup != null &amp;&amp; dup.getId() != coverage.getId()) {</span>
-<span class="fc" id="L106">				throw new IllegalStateException(</span>
-						&quot;Can't add different class with same name: &quot; + name);
-			}
-<span class="fc" id="L109">			final String source = coverage.getSourceFileName();</span>
-<span class="fc bfc" id="L110" title="All 2 branches covered.">			if (source != null) {</span>
-<span class="fc" id="L111">				final SourceFileCoverageImpl sourceFile = getSourceFile(source,</span>
-						coverage.getPackageName());
-<span class="fc" id="L113">				sourceFile.increment(coverage);</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">			if (dup != null) {</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">				if (dup.getId() != coverage.getId()) {</span>
+<span class="fc" id="L107">					throw new IllegalStateException(</span>
+							&quot;Can't add different class with same name: &quot;
+									+ name);
+				}
+			} else {
+<span class="fc" id="L112">				final String source = coverage.getSourceFileName();</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">				if (source != null) {</span>
+<span class="fc" id="L114">					final SourceFileCoverageImpl sourceFile = getSourceFile(</span>
+							source, coverage.getPackageName());
+<span class="fc" id="L116">					sourceFile.increment(coverage);</span>
+				}
 			}
 		}
-<span class="fc" id="L116">	}</span>
+<span class="fc" id="L120">	}</span>
 
 	private SourceFileCoverageImpl getSourceFile(final String filename,
 			final String packagename) {
-<span class="fc" id="L120">		final String key = packagename + '/' + filename;</span>
-<span class="fc" id="L121">		SourceFileCoverageImpl sourcefile = (SourceFileCoverageImpl) sourcefiles</span>
+<span class="fc" id="L124">		final String key = packagename + '/' + filename;</span>
+<span class="fc" id="L125">		SourceFileCoverageImpl sourcefile = (SourceFileCoverageImpl) sourcefiles</span>
 				.get(key);
-<span class="fc bfc" id="L123" title="All 2 branches covered.">		if (sourcefile == null) {</span>
-<span class="fc" id="L124">			sourcefile = new SourceFileCoverageImpl(filename, packagename);</span>
-<span class="fc" id="L125">			sourcefiles.put(key, sourcefile);</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">		if (sourcefile == null) {</span>
+<span class="fc" id="L128">			sourcefile = new SourceFileCoverageImpl(filename, packagename);</span>
+<span class="fc" id="L129">			sourcefiles.put(key, sourcefile);</span>
 		}
-<span class="fc" id="L127">		return sourcefile;</span>
+<span class="fc" id="L131">		return sourcefile;</span>
 	}
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201511160932</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201511241051</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>
