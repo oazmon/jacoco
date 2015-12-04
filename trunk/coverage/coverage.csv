@@ -120,7 +120,7 @@ JaCoCo/org.jacoco.core,org.jacoco.core.data,SessionInfoStore,0,88,0,6,0,19,0,9,0
 JaCoCo/org.jacoco.core,org.jacoco.core.data,ExecutionData,0,165,0,10,0,31,0,15,0,10
 JaCoCo/org.jacoco.core,org.jacoco.core.data,ExecutionDataWriter,6,95,0,0,2,30,0,6,0,6
 JaCoCo/org.jacoco.core,org.jacoco.core.data,SessionInfo,0,57,0,6,0,16,0,9,0,6
-JaCoCo/org.jacoco.core,org.jacoco.core.data,ExecutionDataStore,0,164,0,12,0,36,0,17,0,11
+JaCoCo/org.jacoco.core,org.jacoco.core.data,ExecutionDataStore,0,166,0,12,0,36,0,17,0,11
 JaCoCo/org.jacoco.core,org.jacoco.core.internal.data,CompactDataOutput,0,74,0,10,0,20,0,8,0,3
 JaCoCo/org.jacoco.core,org.jacoco.core.internal.data,CRC64,3,77,0,8,2,14,1,6,1,2
 JaCoCo/org.jacoco.core,org.jacoco.core.internal.data,CompactDataInput,0,61,0,8,0,14,0,7,0,3
