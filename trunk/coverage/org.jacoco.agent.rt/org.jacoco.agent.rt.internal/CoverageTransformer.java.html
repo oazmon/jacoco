@@ -45,7 +45,9 @@ public class CoverageTransformer implements ClassFileTransformer {
 
 	private final ClassFileDumper classFileDumper;
 
-	private final boolean includeBootstrapClasses;
+	private final boolean inclBootstrapClasses;
+
+	private final boolean inclNoLocationClasses;
 
 	/**
 	 * New transformer with the given delegates.
@@ -58,16 +60,17 @@ public class CoverageTransformer implements ClassFileTransformer {
 	 *            logger for exceptions during instrumentation
 	 */
 	public CoverageTransformer(final IRuntime runtime,
-<span class="fc" id="L61">			final AgentOptions options, final IExceptionLogger logger) {</span>
-<span class="fc" id="L62">		this.instrumenter = new Instrumenter(runtime);</span>
-<span class="fc" id="L63">		this.logger = logger;</span>
+<span class="fc" id="L63">			final AgentOptions options, final IExceptionLogger logger) {</span>
+<span class="fc" id="L64">		this.instrumenter = new Instrumenter(runtime);</span>
+<span class="fc" id="L65">		this.logger = logger;</span>
 		// Class names will be reported in VM notation:
-<span class="fc" id="L65">		includes = new WildcardMatcher(toVMName(options.getIncludes()));</span>
-<span class="fc" id="L66">		excludes = new WildcardMatcher(toVMName(options.getExcludes()));</span>
-<span class="fc" id="L67">		exclClassloader = new WildcardMatcher(options.getExclClassloader());</span>
-<span class="fc" id="L68">		classFileDumper = new ClassFileDumper(options.getClassDumpDir());</span>
-<span class="fc" id="L69">		includeBootstrapClasses = options.getInclBootstrapClasses();</span>
-<span class="fc" id="L70">	}</span>
+<span class="fc" id="L67">		includes = new WildcardMatcher(toVMName(options.getIncludes()));</span>
+<span class="fc" id="L68">		excludes = new WildcardMatcher(toVMName(options.getExcludes()));</span>
+<span class="fc" id="L69">		exclClassloader = new WildcardMatcher(options.getExclClassloader());</span>
+<span class="fc" id="L70">		classFileDumper = new ClassFileDumper(options.getClassDumpDir());</span>
+<span class="fc" id="L71">		inclBootstrapClasses = options.getInclBootstrapClasses();</span>
+<span class="fc" id="L72">		inclNoLocationClasses = options.getInclNoLocationClasses();</span>
+<span class="fc" id="L73">	}</span>
 
 	public byte[] transform(final ClassLoader loader, final String classname,
 			final Class&lt;?&gt; classBeingRedefined,
@@ -75,30 +78,58 @@ public class CoverageTransformer implements ClassFileTransformer {
 			final byte[] classfileBuffer) throws IllegalClassFormatException {
 
 		// We do not support class retransformation:
-<span class="fc bfc" id="L78" title="All 2 branches covered.">		if (classBeingRedefined != null) {</span>
-<span class="fc" id="L79">			return null;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">		if (classBeingRedefined != null) {</span>
+<span class="fc" id="L82">			return null;</span>
 		}
 
-		// We exclude dynamically created non-bootstrap classes.
-<span class="fc bfc" id="L83" title="All 4 branches covered.">		if (loader != null &amp;&amp; !hasSourceLocation(protectionDomain)) {</span>
-<span class="fc" id="L84">			return null;</span>
-		}
-
-<span class="fc bfc" id="L87" title="All 2 branches covered.">		if (!filter(loader, classname)) {</span>
-<span class="fc" id="L88">			return null;</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">		if (!filter(loader, classname, protectionDomain)) {</span>
+<span class="fc" id="L86">			return null;</span>
 		}
 
 		try {
-<span class="fc" id="L92">			classFileDumper.dump(classname, classfileBuffer);</span>
-<span class="nc" id="L93">			return instrumenter.instrument(classfileBuffer, classname);</span>
-<span class="fc" id="L94">		} catch (final Exception ex) {</span>
-<span class="fc" id="L95">			final IllegalClassFormatException wrapper = new IllegalClassFormatException(</span>
+<span class="fc" id="L90">			classFileDumper.dump(classname, classfileBuffer);</span>
+<span class="nc" id="L91">			return instrumenter.instrument(classfileBuffer, classname);</span>
+<span class="fc" id="L92">		} catch (final Exception ex) {</span>
+<span class="fc" id="L93">			final IllegalClassFormatException wrapper = new IllegalClassFormatException(</span>
 					ex.getMessage());
-<span class="fc" id="L97">			wrapper.initCause(ex);</span>
+<span class="fc" id="L95">			wrapper.initCause(ex);</span>
 			// Report this, as the exception is ignored by the JVM:
-<span class="fc" id="L99">			logger.logExeption(wrapper);</span>
-<span class="fc" id="L100">			throw wrapper;</span>
+<span class="fc" id="L97">			logger.logExeption(wrapper);</span>
+<span class="fc" id="L98">			throw wrapper;</span>
 		}
+	}
+
+	/**
+	 * Checks whether this class should be instrumented.
+	 * 
+	 * @param loader
+	 *            loader for the class
+	 * @param classname
+	 *            VM name of the class to check
+	 * @param protectionDomain
+	 *            protection domain for the class
+	 * @return &lt;code&gt;true&lt;/code&gt; if the class should be instrumented
+	 */
+	boolean filter(final ClassLoader loader, final String classname,
+			final ProtectionDomain protectionDomain) {
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		if (loader == null) {</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">			if (!inclBootstrapClasses) {</span>
+<span class="fc" id="L117">				return false;</span>
+			}
+		} else {
+<span class="fc bfc" id="L120" title="All 4 branches covered.">			if (!inclNoLocationClasses &amp;&amp; !hasSourceLocation(protectionDomain)) {</span>
+<span class="fc" id="L121">				return false;</span>
+			}
+<span class="fc bfc" id="L123" title="All 2 branches covered.">			if (exclClassloader.matches(loader.getClass().getName())) {</span>
+<span class="fc" id="L124">				return false;</span>
+			}
+		}
+
+<span class="fc bfc" id="L128" title="All 6 branches covered.">		return !classname.startsWith(AGENT_PREFIX) &amp;&amp;</span>
+
+		includes.matches(classname) &amp;&amp;
+
+		!excludes.matches(classname);
 	}
 
 	/**
@@ -109,47 +140,20 @@ public class CoverageTransformer implements ClassFileTransformer {
 	 *            protection domain to check (or &lt;code&gt;null&lt;/code&gt;)
 	 * @return &lt;code&gt;true&lt;/code&gt; if a source location is defined
 	 */
-	boolean hasSourceLocation(final ProtectionDomain protectionDomain) {
-<span class="fc bfc" id="L113" title="All 2 branches covered.">		if (protectionDomain == null) {</span>
-<span class="fc" id="L114">			return false;</span>
+	private boolean hasSourceLocation(final ProtectionDomain protectionDomain) {
+<span class="fc bfc" id="L144" title="All 2 branches covered.">		if (protectionDomain == null) {</span>
+<span class="fc" id="L145">			return false;</span>
 		}
-<span class="fc" id="L116">		final CodeSource codeSource = protectionDomain.getCodeSource();</span>
-<span class="fc bfc" id="L117" title="All 2 branches covered.">		if (codeSource == null) {</span>
-<span class="fc" id="L118">			return false;</span>
+<span class="fc" id="L147">		final CodeSource codeSource = protectionDomain.getCodeSource();</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">		if (codeSource == null) {</span>
+<span class="fc" id="L149">			return false;</span>
 		}
-<span class="fc bfc" id="L120" title="All 2 branches covered.">		return codeSource.getLocation() != null;</span>
-	}
-
-	/**
-	 * Checks whether this class should be instrumented.
-	 * 
-	 * @param loader
-	 *            loader for the class
-	 * @param classname
-	 *            VM name of the class to check
-	 * @return &lt;code&gt;true&lt;/code&gt; if the class should be instrumented
-	 */
-	boolean filter(final ClassLoader loader, final String classname) {
-<span class="fc bfc" id="L133" title="All 2 branches covered.">		if (loader == null) {</span>
-<span class="fc bfc" id="L134" title="All 2 branches covered.">			if (!includeBootstrapClasses) {</span>
-<span class="fc" id="L135">				return false;</span>
-			}
-		} else {
-<span class="fc bfc" id="L138" title="All 2 branches covered.">			if (exclClassloader.matches(loader.getClass().getName())) {</span>
-<span class="fc" id="L139">				return false;</span>
-			}
-		}
-
-<span class="fc bfc" id="L143" title="All 6 branches covered.">		return !classname.startsWith(AGENT_PREFIX) &amp;&amp;</span>
-
-		includes.matches(classname) &amp;&amp;
-
-		!excludes.matches(classname);
+<span class="fc bfc" id="L151" title="All 2 branches covered.">		return codeSource.getLocation() != null;</span>
 	}
 
 	private static String toVMName(final String srcName) {
-<span class="fc" id="L151">		return srcName.replace('.', '/');</span>
+<span class="fc" id="L155">		return srcName.replace('.', '/');</span>
 	}
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201601120340</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201601131008</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>

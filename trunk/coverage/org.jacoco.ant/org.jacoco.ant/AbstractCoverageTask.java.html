@@ -126,14 +126,25 @@ public class AbstractCoverageTask extends Task {
 <span class="fc" id="L126">	}</span>
 
 	/**
+	 * Sets whether classes without source location should be instrumented.
+	 * 
+	 * @param include
+	 *            &lt;code&gt;true&lt;/code&gt; if classes without source location should be
+	 *            instrumented
+	 */
+	public void setInclNoLocationClasses(final boolean include) {
+<span class="fc" id="L136">		agentOptions.setInclNoLocationClasses(include);</span>
+<span class="fc" id="L137">	}</span>
+
+	/**
 	 * Sets the session identifier. Default is a auto-generated id
 	 * 
 	 * @param id
 	 *            session identifier
 	 */
 	public void setSessionId(final String id) {
-<span class="fc" id="L135">		agentOptions.setSessionId(id);</span>
-<span class="fc" id="L136">	}</span>
+<span class="fc" id="L146">		agentOptions.setSessionId(id);</span>
+<span class="fc" id="L147">	}</span>
 
 	/**
 	 * Dump coverage data on VM termination. Default is &lt;code&gt;true&lt;/code&gt;
@@ -142,8 +153,8 @@ public class AbstractCoverageTask extends Task {
 	 *            &lt;code&gt;true&lt;/code&gt; to write coverage data on VM termination
 	 */
 	public void setDumpOnExit(final boolean dumpOnExit) {
-<span class="fc" id="L145">		agentOptions.setDumpOnExit(dumpOnExit);</span>
-<span class="fc" id="L146">	}</span>
+<span class="fc" id="L156">		agentOptions.setDumpOnExit(dumpOnExit);</span>
+<span class="fc" id="L157">	}</span>
 
 	/**
 	 * Sets the output method. Default is &lt;code&gt;file&lt;/code&gt;
@@ -152,8 +163,8 @@ public class AbstractCoverageTask extends Task {
 	 *            Output method
 	 */
 	public void setOutput(final String output) {
-<span class="fc" id="L155">		agentOptions.setOutput(output);</span>
-<span class="fc" id="L156">	}</span>
+<span class="fc" id="L166">		agentOptions.setOutput(output);</span>
+<span class="fc" id="L167">	}</span>
 
 	/**
 	 * Sets the IP address or hostname to bind to when output method is tcp
@@ -164,8 +175,8 @@ public class AbstractCoverageTask extends Task {
 	 *            Address to bind or connect to
 	 */
 	public void setAddress(final String address) {
-<span class="fc" id="L167">		agentOptions.setAddress(address);</span>
-<span class="fc" id="L168">	}</span>
+<span class="fc" id="L178">		agentOptions.setAddress(address);</span>
+<span class="fc" id="L179">	}</span>
 
 	/**
 	 * Sets the Port to bind to when the output method is tcp server or connect
@@ -175,8 +186,8 @@ public class AbstractCoverageTask extends Task {
 	 *            port to bind to or connect to
 	 */
 	public void setPort(final int port) {
-<span class="fc" id="L178">		agentOptions.setPort(port);</span>
-<span class="fc" id="L179">	}</span>
+<span class="fc" id="L189">		agentOptions.setPort(port);</span>
+<span class="fc" id="L190">	}</span>
 
 	/**
 	 * Sets the directory where all class files seen by the agent should be
@@ -186,8 +197,8 @@ public class AbstractCoverageTask extends Task {
 	 *            dump output location
 	 */
 	public void setClassdumpdir(final File dir) {
-<span class="fc" id="L189">		agentOptions.setClassDumpDir(dir.getAbsolutePath());</span>
-<span class="fc" id="L190">	}</span>
+<span class="fc" id="L200">		agentOptions.setClassDumpDir(dir.getAbsolutePath());</span>
+<span class="fc" id="L201">	}</span>
 
 	/**
 	 * Sets whether the agent should expose functionality via JMX.
@@ -196,8 +207,8 @@ public class AbstractCoverageTask extends Task {
 	 *            &lt;code&gt;true&lt;/code&gt; if JMX should be enabled
 	 */
 	public void setJmx(final boolean jmx) {
-<span class="nc" id="L199">		agentOptions.setJmx(jmx);</span>
-<span class="nc" id="L200">	}</span>
+<span class="fc" id="L210">		agentOptions.setJmx(jmx);</span>
+<span class="fc" id="L211">	}</span>
 
 	/**
 	 * Creates JVM argument to launch with the specified JaCoCo agent jar and
@@ -206,35 +217,35 @@ public class AbstractCoverageTask extends Task {
 	 * @return JVM Argument to pass to new VM
 	 */
 	protected String getLaunchingArgument() {
-<span class="fc" id="L209">		return prepareAgentOptions().getVMArgument(getAgentFile());</span>
+<span class="fc" id="L220">		return prepareAgentOptions().getVMArgument(getAgentFile());</span>
 	}
 
 	private AgentOptions prepareAgentOptions() {
-<span class="fc bfc" id="L213" title="All 2 branches covered.">		if (OutputMode.file.equals(agentOptions.getOutput())) {</span>
-<span class="fc" id="L214">			agentOptions.setDestfile(destfile.getAbsolutePath());</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">		if (OutputMode.file.equals(agentOptions.getOutput())) {</span>
+<span class="fc" id="L225">			agentOptions.setDestfile(destfile.getAbsolutePath());</span>
 		}
-<span class="fc" id="L216">		return agentOptions;</span>
+<span class="fc" id="L227">		return agentOptions;</span>
 	}
 
 	private File getAgentFile() {
 		try {
-<span class="fc" id="L221">			File agentFile = null;</span>
-<span class="fc" id="L222">			final String agentFileLocation = getProject().getProperty(</span>
+<span class="fc" id="L232">			File agentFile = null;</span>
+<span class="fc" id="L233">			final String agentFileLocation = getProject().getProperty(</span>
 					&quot;_jacoco.agentFile&quot;);
-<span class="fc bfc" id="L224" title="All 2 branches covered.">			if (agentFileLocation != null) {</span>
-<span class="fc" id="L225">				agentFile = new File(agentFileLocation);</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">			if (agentFileLocation != null) {</span>
+<span class="fc" id="L236">				agentFile = new File(agentFileLocation);</span>
 			} else {
-<span class="fc" id="L227">				agentFile = AgentJar.extractToTempLocation();</span>
-<span class="fc" id="L228">				getProject().setProperty(&quot;_jacoco.agentFile&quot;,</span>
+<span class="fc" id="L238">				agentFile = AgentJar.extractToTempLocation();</span>
+<span class="fc" id="L239">				getProject().setProperty(&quot;_jacoco.agentFile&quot;,</span>
 						agentFile.toString());
 			}
 
-<span class="fc" id="L232">			return agentFile;</span>
-<span class="nc" id="L233">		} catch (final IOException e) {</span>
-<span class="nc" id="L234">			throw new BuildException(&quot;Unable to extract agent jar&quot;, e,</span>
+<span class="fc" id="L243">			return agentFile;</span>
+<span class="nc" id="L244">		} catch (final IOException e) {</span>
+<span class="nc" id="L245">			throw new BuildException(&quot;Unable to extract agent jar&quot;, e,</span>
 					getLocation());
 		}
 	}
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201601120340</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201601131008</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>

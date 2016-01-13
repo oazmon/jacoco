@@ -81,6 +81,12 @@ import org.jacoco.core.runtime.AgentOptions;
 	 */
 	Boolean inclBootstrapClasses;
 	/**
+	 * Specifies whether classes without source location should be instrumented.
+	 * 
+	 * @parameter property=&quot;jacoco.inclNoLocationClasses&quot;
+	 */
+	Boolean inclNoLocationClasses;
+	/**
 	 * A session identifier that is written with the execution data. Without
 	 * this parameter a random identifier is created by the agent.
 	 * 
@@ -144,92 +150,96 @@ import org.jacoco.core.runtime.AgentOptions;
 
 	@Override
 	public void executeMojo() {
-<span class="fc" id="L147">		final String name = getEffectivePropertyName();</span>
-<span class="fc" id="L148">		final Properties projectProperties = getProject().getProperties();</span>
-<span class="fc" id="L149">		final String oldValue = projectProperties.getProperty(name);</span>
-<span class="fc" id="L150">		final String newValue = createAgentOptions().prependVMArguments(</span>
+<span class="fc" id="L153">		final String name = getEffectivePropertyName();</span>
+<span class="fc" id="L154">		final Properties projectProperties = getProject().getProperties();</span>
+<span class="fc" id="L155">		final String oldValue = projectProperties.getProperty(name);</span>
+<span class="fc" id="L156">		final String newValue = createAgentOptions().prependVMArguments(</span>
 				oldValue, getAgentJarFile());
-<span class="fc" id="L152">		getLog().info(name + &quot; set to &quot; + newValue);</span>
-<span class="fc" id="L153">		projectProperties.setProperty(name, newValue);</span>
-<span class="fc" id="L154">	}</span>
+<span class="fc" id="L158">		getLog().info(name + &quot; set to &quot; + newValue);</span>
+<span class="fc" id="L159">		projectProperties.setProperty(name, newValue);</span>
+<span class="fc" id="L160">	}</span>
 
 	@Override
 	protected void skipMojo() {
-<span class="fc" id="L158">		final String name = getEffectivePropertyName();</span>
-<span class="fc" id="L159">		final Properties projectProperties = getProject().getProperties();</span>
-<span class="fc" id="L160">		getLog().info(name + &quot; set to empty&quot;);</span>
-<span class="fc" id="L161">		projectProperties.setProperty(name, &quot;&quot;);</span>
-<span class="fc" id="L162">	}</span>
+<span class="fc" id="L164">		final String name = getEffectivePropertyName();</span>
+<span class="fc" id="L165">		final Properties projectProperties = getProject().getProperties();</span>
+<span class="fc" id="L166">		getLog().info(name + &quot; set to empty&quot;);</span>
+<span class="fc" id="L167">		projectProperties.setProperty(name, &quot;&quot;);</span>
+<span class="fc" id="L168">	}</span>
 
 	File getAgentJarFile() {
-<span class="fc" id="L165">		final Artifact jacocoAgentArtifact = pluginArtifactMap</span>
+<span class="fc" id="L171">		final Artifact jacocoAgentArtifact = pluginArtifactMap</span>
 				.get(AGENT_ARTIFACT_NAME);
-<span class="fc" id="L167">		return jacocoAgentArtifact.getFile();</span>
+<span class="fc" id="L173">		return jacocoAgentArtifact.getFile();</span>
 	}
 
 	AgentOptions createAgentOptions() {
-<span class="fc" id="L171">		final AgentOptions agentOptions = new AgentOptions();</span>
-<span class="fc" id="L172">		agentOptions.setDestfile(getDestFile().getAbsolutePath());</span>
-<span class="fc bfc" id="L173" title="All 2 branches covered.">		if (append != null) {</span>
-<span class="fc" id="L174">			agentOptions.setAppend(append.booleanValue());</span>
+<span class="fc" id="L177">		final AgentOptions agentOptions = new AgentOptions();</span>
+<span class="fc" id="L178">		agentOptions.setDestfile(getDestFile().getAbsolutePath());</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">		if (append != null) {</span>
+<span class="fc" id="L180">			agentOptions.setAppend(append.booleanValue());</span>
 		}
-<span class="pc bpc" id="L176" title="1 of 4 branches missed.">		if (getIncludes() != null &amp;&amp; !getIncludes().isEmpty()) {</span>
-<span class="fc" id="L177">			final String agentIncludes = StringUtils.join(getIncludes()</span>
+<span class="pc bpc" id="L182" title="1 of 4 branches missed.">		if (getIncludes() != null &amp;&amp; !getIncludes().isEmpty()) {</span>
+<span class="fc" id="L183">			final String agentIncludes = StringUtils.join(getIncludes()</span>
 					.iterator(), &quot;:&quot;);
-<span class="fc" id="L179">			agentOptions.setIncludes(agentIncludes);</span>
+<span class="fc" id="L185">			agentOptions.setIncludes(agentIncludes);</span>
 		}
-<span class="pc bpc" id="L181" title="1 of 4 branches missed.">		if (getExcludes() != null &amp;&amp; !getExcludes().isEmpty()) {</span>
-<span class="fc" id="L182">			final String agentExcludes = StringUtils.join(getExcludes()</span>
+<span class="pc bpc" id="L187" title="1 of 4 branches missed.">		if (getExcludes() != null &amp;&amp; !getExcludes().isEmpty()) {</span>
+<span class="fc" id="L188">			final String agentExcludes = StringUtils.join(getExcludes()</span>
 					.iterator(), &quot;:&quot;);
-<span class="fc" id="L184">			agentOptions.setExcludes(agentExcludes);</span>
+<span class="fc" id="L190">			agentOptions.setExcludes(agentExcludes);</span>
 		}
-<span class="fc bfc" id="L186" title="All 2 branches covered.">		if (exclClassLoaders != null) {</span>
-<span class="fc" id="L187">			agentOptions.setExclClassloader(exclClassLoaders);</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">		if (exclClassLoaders != null) {</span>
+<span class="fc" id="L193">			agentOptions.setExclClassloader(exclClassLoaders);</span>
 		}
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">		if (inclBootstrapClasses != null) {</span>
-<span class="nc" id="L190">			agentOptions.setInclBootstrapClasses(inclBootstrapClasses</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">		if (inclBootstrapClasses != null) {</span>
+<span class="fc" id="L196">			agentOptions.setInclBootstrapClasses(inclBootstrapClasses</span>
 					.booleanValue());
 		}
-<span class="fc bfc" id="L193" title="All 2 branches covered.">		if (sessionId != null) {</span>
-<span class="fc" id="L194">			agentOptions.setSessionId(sessionId);</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">		if (inclNoLocationClasses != null) {</span>
+<span class="fc" id="L200">			agentOptions.setInclNoLocationClasses(inclNoLocationClasses</span>
+					.booleanValue());
 		}
-<span class="fc bfc" id="L196" title="All 2 branches covered.">		if (dumpOnExit != null) {</span>
-<span class="fc" id="L197">			agentOptions.setDumpOnExit(dumpOnExit.booleanValue());</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">		if (sessionId != null) {</span>
+<span class="fc" id="L204">			agentOptions.setSessionId(sessionId);</span>
 		}
-<span class="fc bfc" id="L199" title="All 2 branches covered.">		if (output != null) {</span>
-<span class="fc" id="L200">			agentOptions.setOutput(output);</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">		if (dumpOnExit != null) {</span>
+<span class="fc" id="L207">			agentOptions.setDumpOnExit(dumpOnExit.booleanValue());</span>
 		}
-<span class="fc bfc" id="L202" title="All 2 branches covered.">		if (address != null) {</span>
-<span class="fc" id="L203">			agentOptions.setAddress(address);</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">		if (output != null) {</span>
+<span class="fc" id="L210">			agentOptions.setOutput(output);</span>
 		}
-<span class="fc bfc" id="L205" title="All 2 branches covered.">		if (port != null) {</span>
-<span class="fc" id="L206">			agentOptions.setPort(port.intValue());</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">		if (address != null) {</span>
+<span class="fc" id="L213">			agentOptions.setAddress(address);</span>
 		}
-<span class="fc bfc" id="L208" title="All 2 branches covered.">		if (classDumpDir != null) {</span>
-<span class="fc" id="L209">			agentOptions.setClassDumpDir(classDumpDir.getAbsolutePath());</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">		if (port != null) {</span>
+<span class="fc" id="L216">			agentOptions.setPort(port.intValue());</span>
 		}
-<span class="pc bpc" id="L211" title="1 of 2 branches missed.">		if (jmx != null) {</span>
-<span class="nc" id="L212">			agentOptions.setJmx(jmx.booleanValue());</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">		if (classDumpDir != null) {</span>
+<span class="fc" id="L219">			agentOptions.setClassDumpDir(classDumpDir.getAbsolutePath());</span>
 		}
-<span class="fc" id="L214">		return agentOptions;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">		if (jmx != null) {</span>
+<span class="fc" id="L222">			agentOptions.setJmx(jmx.booleanValue());</span>
+		}
+<span class="fc" id="L224">		return agentOptions;</span>
 	}
 
 	String getEffectivePropertyName() {
-<span class="fc bfc" id="L218" title="All 2 branches covered.">		if (isPropertyNameSpecified()) {</span>
-<span class="fc" id="L219">			return propertyName;</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">		if (isPropertyNameSpecified()) {</span>
+<span class="fc" id="L229">			return propertyName;</span>
 		}
-<span class="pc bpc" id="L221" title="1 of 2 branches missed.">		if (isEclipseTestPluginPackaging()) {</span>
-<span class="nc" id="L222">			return TYCHO_ARG_LINE;</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">		if (isEclipseTestPluginPackaging()) {</span>
+<span class="nc" id="L232">			return TYCHO_ARG_LINE;</span>
 		}
-<span class="fc" id="L224">		return SUREFIRE_ARG_LINE;</span>
+<span class="fc" id="L234">		return SUREFIRE_ARG_LINE;</span>
 	}
 
 	boolean isPropertyNameSpecified() {
-<span class="pc bpc" id="L228" title="1 of 4 branches missed.">		return propertyName != null &amp;&amp; !&quot;&quot;.equals(propertyName);</span>
+<span class="pc bpc" id="L238" title="1 of 4 branches missed.">		return propertyName != null &amp;&amp; !&quot;&quot;.equals(propertyName);</span>
 	}
 
 	boolean isEclipseTestPluginPackaging() {
-<span class="fc" id="L232">		return &quot;eclipse-test-plugin&quot;.equals(getProject().getPackaging());</span>
+<span class="fc" id="L242">		return &quot;eclipse-test-plugin&quot;.equals(getProject().getPackaging());</span>
 	}
 
 	/**
@@ -238,4 +248,4 @@ import org.jacoco.core.runtime.AgentOptions;
 	abstract File getDestFile();
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201601120340</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201601131008</span>Code Coverage Report for JaCoCo 0.7.6-SNAPSHOT</div></body></html>
