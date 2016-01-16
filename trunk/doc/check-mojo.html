@@ -82,10 +82,16 @@ BRANCH, COMPLEXITY, METHOD, CLASS) and defines a minimum or maximum
 for the corresponding value (TOTALCOUNT, COVEREDCOUNT, MISSEDCOUNT,
 COVEREDRATIO, MISSEDRATIO). If a limit refers to a ratio the range
 is from 0.0 to 1.0 where the number of decimal places will also
-determine the precision in error messages. Note that you
-must use implementation hints for rule and
-limit when using Maven 2, with Maven 3 you do not need to
-specify the attributes.</p>
+determine the precision in error messages.</p>
+<p>If not specified the following defaults are assumed:</p>
+<ul>
+<li>rule element: BUNDLE</li>
+<li>limit counter: INSTRUCTION</li>
+<li>limit value: COVEREDRATIO</li>
+</ul>
+<p>Note that you must use implementation hints for
+rule and limit when using Maven 2, with Maven 3
+you do not need to specify the attributes.</p>
 <p>This example requires an overall instruction coverage of 80% and
 no class must be missed:</p>
 <pre>
@@ -305,10 +311,16 @@ BRANCH, COMPLEXITY, METHOD, CLASS) and defines a minimum or maximum
 for the corresponding value (TOTALCOUNT, COVEREDCOUNT, MISSEDCOUNT,
 COVEREDRATIO, MISSEDRATIO). If a limit refers to a ratio the range
 is from 0.0 to 1.0 where the number of decimal places will also
-determine the precision in error messages. Note that you
-must use implementation hints for rule and
-limit when using Maven 2, with Maven 3 you do not need to
-specify the attributes.</p>
+determine the precision in error messages.</p>
+<p>If not specified the following defaults are assumed:</p>
+<ul>
+<li>rule element: BUNDLE</li>
+<li>limit counter: INSTRUCTION</li>
+<li>limit value: COVEREDRATIO</li>
+</ul>
+<p>Note that you must use implementation hints for
+rule and limit when using Maven 2, with Maven 3
+you do not need to specify the attributes.</p>
 <p>This example requires an overall instruction coverage of 80% and
 no class must be missed:</p>
 <pre>
@@ -393,7 +405,7 @@ class except test classes:</p>
 <span class="right">
 <a href="http://www.eclemma.org/jacoco">JaCoCo</a>
 						 
-						0.7.6.201601150829</span>
+						0.7.6.201601160308</span>
 <a href="../doc/license.html">Copyright</a>
 					©
 					2009, 2016
